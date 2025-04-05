@@ -5,12 +5,9 @@ import { fileURLToPath } from "url";
 import { Server } from "socket.io";
 import crypto from "crypto";
 
-// TODO: Add support for nicknames.
-// TODO: Don’t send the same message to the user that sent it. Instead, append the message directly as soon as they press enter.
 // TODO: Add “{user} is typing” functionality.
 // TODO: Show who’s online.
 // TODO: Add private messaging.
-// TODO: Share your improvements!
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -100,7 +97,7 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("chat message", (msg) => {
-    io.emit("chat message", msg);
+    socket.broadcast.emit("chat message", msg);
     console.log("Message: " + msg);
   });
 
