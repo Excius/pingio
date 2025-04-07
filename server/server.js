@@ -6,7 +6,6 @@ import { Server } from "socket.io";
 import crypto from "crypto";
 
 // TODO: Add “{user} is typing” functionality.
-// TODO: Show who’s online.
 // TODO: Add private messaging.
 
 const __filename = fileURLToPath(import.meta.url);
@@ -57,8 +56,13 @@ app.post("/", (req, res) => {
   return res.redirect(`/chat?id=${id}`);
 });
 
-app.get("/chat", (req, res) => {
+app.get("/chat", async (req, res) => {
+  console.log("chat route");
   const { id } = req.query;
+  console.log("id", id);
+  if (id === undefined || !(await getUserById(id))) {
+    res.status(400).send("Invalid user ID");
+  }
   const filePath = path.join(__dirname, "/../public/chat.html");
 
   res.sendFile(filePath);
@@ -98,12 +102,10 @@ io.on("connection", async (socket) => {
 
   socket.on("chat message", (msg) => {
     socket.broadcast.emit("chat message", msg);
-    console.log("Message: " + msg);
   });
 
   socket.on("user id", async (id) => {
     const user = await getUserById(id);
-    console.log(user);
 
     if (user) {
       socket.emit("user name", user.username);
@@ -111,6 +113,12 @@ io.on("connection", async (socket) => {
       console.log("User not found");
       socket.emit("user name", "User not found");
     }
+  });
+
+  socket.on("get-online-users", () => {
+    const onlineUsers = users.map((user) => user.username);
+    console.log("Online users:", onlineUsers);
+    socket.emit("online-users", onlineUsers);
   });
 });
 
