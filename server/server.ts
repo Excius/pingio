@@ -45,7 +45,7 @@ async function removeUser(userId: string): Promise<void> {
 
 app.get("/", (req: Request, res: Response) => {
   try {
-    const filePath = path.join(__dirname, "/../public/index.html");
+    const filePath = path.join(__dirname, "/../../public/index.html");
     res.sendFile(filePath);
   } catch (error: any) {
     throw new Error("Error in GET / route: " + error);
@@ -85,7 +85,7 @@ app.get("/chat", async (req: Request, res: Response) => {
       res.status(400).send("Invalid user ID");
       return;
     }
-    const filePath = path.join(__dirname, "/../public/chat.html");
+    const filePath = path.join(__dirname, "/../../public/chat.html");
 
     res.sendFile(filePath);
   } catch (e: any) {
