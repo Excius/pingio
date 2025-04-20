@@ -10,11 +10,11 @@
 
 ## Upcoming in Pingio v1.1
 
-We're excited to announce that **Pingio v1.1** is in the works! We are porting the whole project to TypeScript from JavaScript to reduce bugs, and we are also introducing *Voice Channel* for you guys.
+We're excited to announce that **Pingio v1.1** is in the works! We are porting the whole project to TypeScript from JavaScript to reduce bugs, and we are also introducing _Voice Channel_ for you guys.
 
 ## Upcoming in Pingio v2
 
-We're excited to announce that **Pingio v2** is in the works! The next version will be built using [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js), offering even faster performance and scalability.
+We're excited to announce that **Pingio v2** is in the works! The next version will be built using ws, offering even faster performance and scalability.
 
 Stay tuned for updates!
 
