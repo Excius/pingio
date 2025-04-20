@@ -1,12 +1,16 @@
 # Pingio
 
-Pingio is a Web Socket-based chat application built using [Socket.io](https://socket.io/). This project demonstrates real-time communication in a web environment, making it easy to set up and use for chat applications or other real-time features.
+[Pingio](https://pingio.onrender.com/) is a Web Socket-based chat application built using [Socket.io](https://socket.io/). This project demonstrates real-time communication in a web environment, making it easy to set up and use for chat applications or other real-time features.
 
 ## Features
 
 - Real-time messaging powered by WebSockets.
 - Built with a combination of **HTML**, **CSS**, and **JavaScript** for the frontend.
 - Backend powered by **Socket.io**, enabling seamless real-time communication.
+
+## Upcoming in Pingio v1.1
+
+We're excited to announce that **Pingio v1.1** is in the works! We are porting the whole project to TypeScript from JavaScript to reduce bugs, and we are also introducing *Voice Channel* for you guys.
 
 ## Upcoming in Pingio v2
 
