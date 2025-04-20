@@ -73,7 +73,6 @@
       socket.emit("user id", id);
 
       input.addEventListener("input", () => {
-        console.log("active");
         socket.emit("typing", id);
       })
 
@@ -98,7 +97,7 @@
             scrollToBottom();
             setTimeout(() => {
               typingMessage.remove();
-            }, 3000);
+            }, 5000);
           }
         } else {
           const typingMessages = extra.querySelectorAll(".typing-message");
