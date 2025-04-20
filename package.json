@@ -1,27 +1,35 @@
 {
-  "name": "ws-chat-socket.io",
+  "name": "pingio",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "/server/index.js",
   "scripts": {
-    "start": "node server/server.js",
+    "start": "node dist/server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server/server.js"
+    "dev": "tsx server/server.ts",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Excius/ws-chat-Socket.io.git"
+    "url": "git+https://github.com/Excius/pingio.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/Excius/ws-chat-Socket.io/issues"
+    "url": "https://github.com/Excius/pingio/issues"
   },
-  "homepage": "https://github.com/Excius/ws-chat-Socket.io#readme",
+  "homepage": "https://github.com/Excius/pingio#readme",
   "dependencies": {
     "express": "^5.1.0",
     "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^20.0.0",
+    "@types/socket.io": "^3.0.1",
+    "tsx": "^4.19.3",
+    "typescript": "^5.0.0"
   }
 }
