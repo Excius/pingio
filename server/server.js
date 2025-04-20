@@ -5,7 +5,6 @@ import { fileURLToPath } from "url";
 import { Server } from "socket.io";
 import crypto from "crypto";
 
-// TODO: Add “{user} is typing” functionality.
 // TODO: Add private messaging.
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,6 +15,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
 let users = [];
 
@@ -109,6 +109,19 @@ io.on("connection", async (socket) => {
 
     if (user) {
       socket.emit("user name", user.username);
+    } else {
+      console.log("User not found");
+      socket.disconnect();
+    }
+  });
+
+  socket.on("typing", async (id) => {
+    const user = await getUserById(id);
+    if (user) {
+      socket.broadcast.emit("typing", {
+        msg: `${user.username} is typing...`,
+        name: user.username,
+      });
     } else {
       console.log("User not found");
       socket.emit("user name", "User not found");
