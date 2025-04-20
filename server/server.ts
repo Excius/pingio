@@ -83,6 +83,7 @@ app.get("/chat", async (req: Request, res: Response) => {
       !(await getUserById(id))
     ) {
       res.status(400).send("Invalid user ID");
+      return;
     }
     const filePath = path.join(__dirname, "/../public/chat.html");
 
