@@ -19,7 +19,12 @@
     </div>
 
     <div class="chat-area">
-      <div class="chat-header">Chat Room</div>
+      <div class="chat-header">
+        Chat Room
+        <a href="/" id="exit-button" title="Exit Chat">
+          <i class="exit-icon">✕</i>
+        </a>
+      </div>
       <div id="messages-container">
         <ul id="messages"></ul>
       </div>
@@ -87,7 +92,7 @@
 
       socket.on("typing", (data) => {
         // Only add typing message if not already present
-        if (data) {
+        if (data.msg) {
           if (!extra.querySelector(`.typing-message-${data.name}`)) {
             const typingMessage = document.createElement("div");
             typingMessage.className = `typing-message-${data.name}`;
@@ -95,12 +100,9 @@
             typingMessage.textContent = data.msg;
             extra.prepend(typingMessage);
             scrollToBottom();
-            setTimeout(() => {
-              typingMessage.remove();
-            }, 5000);
           }
         } else {
-          const typingMessages = extra.querySelectorAll(".typing-message");
+          const typingMessages = extra.querySelectorAll(`.typing-message-${data.name}`);
           typingMessages.forEach((message) => {
             message.remove();
           });

@@ -101,6 +101,10 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("chat message", (msg) => {
+    socket.broadcast.emit("typing", {
+      msg: null,
+      name: msg.name,
+    });
     socket.broadcast.emit("chat message", msg);
   });
 
@@ -115,6 +119,8 @@ io.on("connection", async (socket) => {
     }
   });
 
+  let typingTimeout;
+
   socket.on("typing", async (id) => {
     const user = await getUserById(id);
     if (user) {
@@ -122,6 +128,17 @@ io.on("connection", async (socket) => {
         msg: `${user.username} is typing...`,
         name: user.username,
       });
+
+      // Clear previous timeout if exists
+      if (typingTimeout) clearTimeout(typingTimeout);
+
+      // Set a new timeout to emit "typing" with null msg after 2 seconds of inactivity
+      typingTimeout = setTimeout(() => {
+        socket.broadcast.emit("typing", {
+          msg: null,
+          name: user.username,
+        });
+      }, 2500);
     } else {
       console.log("User not found");
       socket.emit("user name", "User not found");

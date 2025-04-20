@@ -111,6 +111,32 @@ body {
   align-items: center;
   padding: 0 var(--spacing-lg);
   font-weight: 600;
+  justify-content: space-between;
+}
+
+#exit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  transition: var(--transition);
+  text-decoration: none;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+#exit-button:hover {
+  background-color: #f44336;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.exit-icon {
+  font-style: normal;
+  font-size: 14px;
+  line-height: 1;
 }
 
 #messages-container {
