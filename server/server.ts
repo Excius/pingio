@@ -193,5 +193,5 @@ app.use(
   (err: ServerError, req: Request, res: Response, next: NextFunction): void => {
     console.log(err);
     res.status(500).send("Internal Server Error");
-  }
+  },
 );

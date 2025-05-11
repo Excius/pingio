@@ -1,194 +1,198 @@
 <!doctype html>
 <html>
+  <head>
+    <title>Pingio Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="chat.css" />
+  </head>
 
-<head>
-  <title>Pingio Chat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="chat.css">
-</head>
+  <body>
+    <div class="container">
+      <button id="toggle-sidebar" aria-label="Toggle sidebar">☰</button>
 
-<body>
-  <div class="container">
-    <button id="toggle-sidebar" aria-label="Toggle sidebar">☰</button>
-
-    <div id="sidebar">
-      <div class="sidebar-header">
-        <h3>Online Users</h3>
+      <div id="sidebar">
+        <div class="sidebar-header">
+          <h3>Online Users</h3>
+        </div>
+        <ul id="online-users"></ul>
       </div>
-      <ul id="online-users"></ul>
+
+      <div class="chat-area">
+        <div class="chat-header">
+          Chat Room
+          <a href="/" id="exit-button" title="Exit Chat">
+            <i class="exit-icon">✕</i>
+          </a>
+        </div>
+        <div id="messages-container">
+          <ul id="messages"></ul>
+        </div>
+        <div id="extra"></div>
+        <form id="form" action="">
+          <input
+            id="input"
+            placeholder="Type a message..."
+            autocomplete="off"
+          />
+          <button type="submit">Send</button>
+        </form>
+      </div>
     </div>
 
-    <div class="chat-area">
-      <div class="chat-header">
-        Chat Room
-        <a href="/" id="exit-button" title="Exit Chat">
-          <i class="exit-icon">✕</i>
-        </a>
-      </div>
-      <div id="messages-container">
-        <ul id="messages"></ul>
-      </div>
-      <div id="extra"></div>
-      <form id="form" action="">
-        <input id="input" placeholder="Type a message..." autocomplete="off" />
-        <button type="submit">Send</button>
-      </form>
-    </div>
-  </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var form = document.getElementById("form");
+      var input = document.getElementById("input");
+      var messages = document.getElementById("messages");
+      var messagesContainer = document.getElementById("messages-container");
+      var onlineUsers = document.getElementById("online-users");
+      var toggleSidebar = document.getElementById("toggle-sidebar");
+      var sidebar = document.getElementById("sidebar");
+      var extra = document.getElementById("extra");
+      var username;
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    var form = document.getElementById("form");
-    var input = document.getElementById("input");
-    var messages = document.getElementById("messages");
-    var messagesContainer = document.getElementById("messages-container");
-    var onlineUsers = document.getElementById("online-users");
-    var toggleSidebar = document.getElementById("toggle-sidebar");
-    var sidebar = document.getElementById("sidebar");
-    var extra = document.getElementById("extra");
-    var username;
-
-    // Toggle sidebar for mobile
-    toggleSidebar.addEventListener("click", function() {
-      sidebar.classList.toggle("active");
-    });
-
-
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener("click", function(e) {
-      if (
-        sidebar.classList.contains("active") &&
-        !sidebar.contains(e.target) &&
-        e.target !== toggleSidebar
-      ) {
-        sidebar.classList.remove("active");
-      }
-    });
-
-    document.addEventListener("DOMContentLoaded", function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const id = urlParams.get("id");
-      var socket = io({
-        query: {
-          id: id
-        },
+      // Toggle sidebar for mobile
+      toggleSidebar.addEventListener("click", function () {
+        sidebar.classList.toggle("active");
       });
 
-      socket.emit("get-online-users");
-      socket.emit("user id", id);
-
-      input.addEventListener("input", () => {
-        socket.emit("typing", id);
-      })
-
-      socket.on("user name", (name) => {
-        username = name;
-        const welcomeMessage = document.createElement("div");
-        welcomeMessage.className = "welcome-message";
-        welcomeMessage.textContent = `Welcome ${username}! You've joined the chat.`;
-        messagesContainer.prepend(welcomeMessage);
-        scrollToBottom();
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener("click", function (e) {
+        if (
+          sidebar.classList.contains("active") &&
+          !sidebar.contains(e.target) &&
+          e.target !== toggleSidebar
+        ) {
+          sidebar.classList.remove("active");
+        }
       });
 
-      socket.on("typing", (data) => {
-        // Only add typing message if not already present
-        if (data.msg) {
-          if (!extra.querySelector(`.typing-message-${data.name}`)) {
-            const typingMessage = document.createElement("div");
-            typingMessage.className = `typing-message-${data.name}`;
-            typingMessage.classList.add("typing-message");
-            typingMessage.textContent = data.msg;
-            extra.prepend(typingMessage);
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get("id");
+        var socket = io({
+          query: {
+            id: id,
+          },
+        });
+
+        socket.emit("get-online-users");
+        socket.emit("user id", id);
+
+        input.addEventListener("input", () => {
+          socket.emit("typing", id);
+        });
+
+        socket.on("user name", (name) => {
+          username = name;
+          const welcomeMessage = document.createElement("div");
+          welcomeMessage.className = "welcome-message";
+          welcomeMessage.textContent = `Welcome ${username}! You've joined the chat.`;
+          messagesContainer.prepend(welcomeMessage);
+          scrollToBottom();
+        });
+
+        socket.on("typing", (data) => {
+          // Only add typing message if not already present
+          if (data.msg) {
+            if (!extra.querySelector(`.typing-message-${data.name}`)) {
+              const typingMessage = document.createElement("div");
+              typingMessage.className = `typing-message-${data.name}`;
+              typingMessage.classList.add("typing-message");
+              typingMessage.textContent = data.msg;
+              extra.prepend(typingMessage);
+              scrollToBottom();
+            }
+          } else {
+            const typingMessages = extra.querySelectorAll(
+              `.typing-message-${data.name}`,
+            );
+            typingMessages.forEach((message) => {
+              message.remove();
+            });
+          }
+        });
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (input.value) {
+            var item = document.createElement("li");
+            item.className = "own-message";
+
+            var name = document.createElement("span");
+            name.textContent = username;
+            item.appendChild(name);
+
+            var content = document.createElement("div");
+            content.className = "message-content";
+            content.textContent = input.value;
+            item.appendChild(content);
+
+            var time = document.createElement("span");
+            time.className = "timestamp";
+            time.textContent = getCurrentTime();
+            item.appendChild(time);
+
+            messages.appendChild(item);
+            scrollToBottom();
+
+            socket.emit("chat message", {
+              msg: input.value,
+              name: username,
+            });
+            input.value = "";
+          }
+        });
+
+        socket.on("chat message", function (msg) {
+          if (msg.name !== username) {
+            var item = document.createElement("li");
+
+            var name = document.createElement("span");
+            name.textContent = msg.name === null ? "System" : msg.name;
+            if (msg.name === null) {
+              name.classList.add("system");
+              socket.emit("get-online-users");
+            }
+            item.appendChild(name);
+
+            var content = document.createElement("div");
+            content.className = "message-content";
+            content.textContent = msg.msg;
+            item.appendChild(content);
+
+            var time = document.createElement("span");
+            time.className = "timestamp";
+            time.textContent = getCurrentTime();
+            item.appendChild(time);
+
+            messages.appendChild(item);
             scrollToBottom();
           }
-        } else {
-          const typingMessages = extra.querySelectorAll(`.typing-message-${data.name}`);
-          typingMessages.forEach((message) => {
-            message.remove();
+        });
+
+        socket.on("online-users", (users) => {
+          onlineUsers.innerHTML = "";
+          users.forEach((user) => {
+            var item = document.createElement("li");
+            item.textContent = user;
+            onlineUsers.appendChild(item);
           });
-        }
-      })
-
-      form.addEventListener("submit", function(e) {
-        e.preventDefault();
-        if (input.value) {
-          var item = document.createElement("li");
-          item.className = "own-message";
-
-          var name = document.createElement("span");
-          name.textContent = username;
-          item.appendChild(name);
-
-          var content = document.createElement("div");
-          content.className = "message-content";
-          content.textContent = input.value;
-          item.appendChild(content);
-
-          var time = document.createElement("span");
-          time.className = "timestamp";
-          time.textContent = getCurrentTime();
-          item.appendChild(time);
-
-          messages.appendChild(item);
-          scrollToBottom();
-
-          socket.emit("chat message", {
-            msg: input.value,
-            name: username
-          });
-          input.value = "";
-        }
-      });
-
-      socket.on("chat message", function(msg) {
-        if (msg.name !== username) {
-          var item = document.createElement("li");
-
-          var name = document.createElement("span");
-          name.textContent = msg.name === null ? "System" : msg.name;
-          if (msg.name === null) {
-            name.classList.add("system");
-            socket.emit("get-online-users");
-          }
-          item.appendChild(name);
-
-          var content = document.createElement("div");
-          content.className = "message-content";
-          content.textContent = msg.msg;
-          item.appendChild(content);
-
-          var time = document.createElement("span");
-          time.className = "timestamp";
-          time.textContent = getCurrentTime();
-          item.appendChild(time);
-
-          messages.appendChild(item);
-          scrollToBottom();
-        }
-      });
-
-      socket.on("online-users", (users) => {
-        onlineUsers.innerHTML = "";
-        users.forEach((user) => {
-          var item = document.createElement("li");
-          item.textContent = user;
-          onlineUsers.appendChild(item);
         });
       });
-    });
 
-    function scrollToBottom() {
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
+      function scrollToBottom() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
 
-    function getCurrentTime() {
-      const now = new Date();
-      return now.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    }
-  </script>
-</body>
-
+      function getCurrentTime() {
+        const now = new Date();
+        return now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+    </script>
+  </body>
 </html>
+
