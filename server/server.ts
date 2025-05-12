@@ -180,10 +180,6 @@ io.on("connection", async (socket: Socket) => {
 app.get("/users", (req: Request, res: Response) => {
   res.send(users);
 });
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
 
 interface ServerError extends Error {
   status?: number;
@@ -195,3 +191,8 @@ app.use(
     res.status(500).send("Internal Server Error");
   },
 );
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
