@@ -6,6 +6,7 @@ import { Server, Socket } from "socket.io";
 import crypto from "crypto";
 
 // TODO: Add private messaging.
+// TODO: Add multiple rooms.
 
 type User = {
   id: string;
